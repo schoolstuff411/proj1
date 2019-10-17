@@ -1,0 +1,16 @@
+1
+The question stated that we used fake values, so we are definitely p hacking here.
+
+2. If we had done T-tests between each pair of sorting implementation results,
+we would have to run n(n-1)/2 = 7(6)/2 = 21 t tests. If we do three T-tests, then the probability of no incorrect rejection of the null is 0.95^7 = 0.70. We suddenly have an effective of 0.30, which is much less confidence in our results.
+
+3. Ranking by speed is partition sort, qs1, qs3, qs4, qs5, qs2, merge1.
+
+The ones that could not be distinguished are:
+qs2, qs3
+qs2, qs4
+qs2, qs5
+qs3, qs4
+qs3, qs5
+qs4, qs5
+

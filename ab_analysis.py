@@ -18,30 +18,60 @@ def main():
     # Odd uid were shown a new-and-improved search box.
     # Even were shown the original design
 
-    # Output
+    """
+    Chi table is:
+    
+                      used search ,   did not use search
+    control
+    treatment
+    
+    """
+    
+    
     searchdata_oldDesign_users = searchdata_file[searchdata_file["uid"] % 2 == 0]
     searchdata_newDesign_users = searchdata_file[searchdata_file["uid"] % 2 != 0]
+    
+    searchdata_oldDesign_users_yesSearch = searchdata_oldDesign_users[searchdata_oldDesign_users["search_count"] > 0]
+    searchdata_oldDesign_users_noSearch =  searchdata_oldDesign_users[searchdata_oldDesign_users["search_count"] == 0]
+    
+    searchdata_newDesign_users_yesSearch = searchdata_newDesign_users[searchdata_newDesign_users["search_count"] > 0]
+    searchdata_newDesign_users_noSearch = searchdata_newDesign_users[searchdata_newDesign_users["search_count"] == 0]
+    
+    
+
+   
+    contingency_more_users = [ 
+                                [searchdata_oldDesign_users_yesSearch.shape[0], searchdata_oldDesign_users_noSearch.shape[0]],
+                                [searchdata_newDesign_users_yesSearch.shape[0], searchdata_newDesign_users_noSearch.shape[0]]
+                             ]
+    
+    chi2, more_users_p, dof, expected = stats.chi2_contingency(contingency_more_users)
+    ######################
     
     searchdata_oldDesign_instructors = searchdata_oldDesign_users[searchdata_oldDesign_users["is_instructor"] == True]
     searchdata_newDesign_instructors = searchdata_newDesign_users[searchdata_newDesign_users["is_instructor"] == True]
     
-    print(searchdata_oldDesign_users)
-    #Did more users use the search feature? 
-    #(More precisely: did a different fraction of users have search count > 0?)
-    #Did users search more often? 
-    #(More precisely: is the number of searches per user different?)
+    searchdata_oldDesign_instructors_yesSearch = searchdata_oldDesign_instructors[searchdata_oldDesign_instructors["search_count"] > 0]
+    searchdata_oldDesign_instructors_noSearch =  searchdata_oldDesign_instructors[searchdata_oldDesign_instructors["search_count"] == 0]
     
+    searchdata_newDesign_instructors_yesSearch = searchdata_newDesign_instructors[searchdata_newDesign_instructors["search_count"] > 0]
+    searchdata_newDesign_instructors_noSearch = searchdata_newDesign_instructors[searchdata_newDesign_instructors["search_count"] == 0]
     
-    #chi-squared test works on categorical totals like
-    #First one is chi as our categories are: Used search or didnt use search
+   
     
-    #mwu as it can be used to decide that samples from one group are larger/​smaller than another
-    #
+    contingency_more_instr = [ 
+                                [searchdata_oldDesign_instructors_yesSearch.shape[0], searchdata_oldDesign_instructors_noSearch.shape[0]],
+                                [searchdata_newDesign_instructors_yesSearch.shape[0], searchdata_newDesign_instructors_noSearch.shape[0]]
+                             ]
+
+    chi2,  more_instr_p, dof, expected = stats.chi2_contingency(contingency_more_instr)
+    ########################
+  
     print(OUTPUT_TEMPLATE.format(
-        more_users_p=0,
-        more_searches_p=0,
-        more_instr_p=0,
-        more_instr_searches_p=0,
+        more_users_p=more_users_p,
+        more_searches_p=stats.mannwhitneyu(searchdata_oldDesign_users_yesSearch["search_count"], searchdata_newDesign_users_yesSearch["search_count"]).pvalue,
+        more_instr_p= more_instr_p,
+        more_instr_searches_p=stats.mannwhitneyu(searchdata_oldDesign_instructors_yesSearch["search_count"], searchdata_newDesign_instructors_yesSearch["search_count"]).pvalue,
     ))
 
 
